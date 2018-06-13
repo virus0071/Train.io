@@ -102,7 +102,7 @@
     <script type="text/javascript"></script>
 
     <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase.js"></script>
     <script>
       
@@ -118,6 +118,8 @@
 
     var database = firebase.database();
 
+
+    $(".time").html("Current Time: " + moment().toString());
 
     var name="";
     var destination="";
@@ -135,7 +137,7 @@
     };
 
     
-    $(".time").html(moment().toString());
+
 
     
 
@@ -144,7 +146,7 @@
 
     name=$("#name-input").val().trim();
     destination=$("#destination-input").val().trim();
-    time=$("#time-input").val().trim();
+    time=moment($("#time-input").val().trim(), "HH:mm").subtract(1, "years");
     freq=$("#freq-input").val().trim();
 
     database.ref().push({
@@ -169,11 +171,11 @@ database.ref().on("child_added", function(childsnapshot){
     var time = childsnapshot.val().time;
     var freq = childsnapshot.val().freq;
 
-    var firstTime = time;
+ 
     
-    var firstTimeConverted = moment(firstTime, "HH:MM").subtract(1, "years");
+    var timeConverted = moment(time, "HH:mm").subtract(1, "years");
     var currentTime = moment();
-    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+    var diffTime = moment().diff(moment(timeConverted), "minutes");
     var tRemainder = diffTime % freq;
     var away = freq - tRemainder;
     var nextArrival = moment().add(away, "minutes").format("hh:mm");
