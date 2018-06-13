@@ -99,7 +99,7 @@
                   
 </div>
 
-    <script type="text/javascript"></script>
+
 
     <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
     <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
@@ -132,8 +132,9 @@
 
         var nameTd = $("<td>").text(snapshot.val().name);
         var destinationTd = $("<td>").text(snapshot.val().destination);
-        var timeTd = $("<td>").text(snapshot.val().time);
         var freqTd = $("<td>").text(snapshot.val().freq);
+        var nextArrivalTd = $("<td>").text(snapshot.val().nextArrival);
+        var awayTd = $("<td>").text(snapshot.val().away);
     };
 
     
@@ -146,7 +147,7 @@
 
     name=$("#name-input").val().trim();
     destination=$("#destination-input").val().trim();
-    time=moment($("#time-input").val().trim(), "HH:mm").subtract(1, "years");
+    time=$("#time-input").val().trim();
     freq=$("#freq-input").val().trim();
 
     database.ref().push({
@@ -154,6 +155,7 @@
         destination: destination,
         time: time,
         freq: freq,
+        Key : firebase.database().ref().push().key,
         dateAdded: firebase.database.ServerValue.TIMESTAMP
     })
 
@@ -173,28 +175,22 @@ database.ref().on("child_added", function(childsnapshot){
 
  
     
-    var timeConverted = moment(time, "HH:mm").subtract(1, "years");
+    var timeConverted = moment(time, "hh:mm").subtract(1, "years");
     var currentTime = moment();
-    var diffTime = moment().diff(moment(timeConverted), "minutes");
-    var tRemainder = diffTime % freq;
-    var away = freq - tRemainder;
+    var diffTime = moment().diff(moment(timeConverted, "hh:mm"), "minutes");
+    var left = diffTime % freq;
+    var away = freq - left;
     var nextArrival = moment().add(away, "minutes").format("hh:mm");
-
-    $("#train-list tbody").append("<tr><td>" + name + "</td><td>" + destination + "</td><td>"  + freq + "</td><td>" + nextArrival + "</td><td>" + away + "</td></tr>")
+    
+    $("#train-list tbody").append("<tr><td>" + name + "</td><td>" + destination + "</td><td>"  + freq + "</td><td>" + nextArrival + "</td><td>" + away + "<button type='button' class='btn btn-danger btn-xs pull-right' value='Delete'><span class='glyphicon glyphicon-trash'></span></button>" + "</td></tr>")
 
     }, function(errorObject){
       console.log("The read failed: " + errorObject.code);
     });
 
+  
 
 
-database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
-    
-    $("#name-display").text(snapshot.val().name);
-    $("#destination-display").text(snapshot.val().destination);
-    $("#time-display").text(snapshot.val().time);
-    $("#freq-display").text(snapshot.val().freq);
-})
 
     </script>
 </body>
