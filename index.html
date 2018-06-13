@@ -182,7 +182,7 @@ database.ref().on("child_added", function(childsnapshot){
     var away = freq - left;
     var nextArrival = moment().add(away, "minutes").format("hh:mm");
     
-    $("#train-list tbody").append("<tr><td>" + name + "</td><td>" + destination + "</td><td>"  + freq + "</td><td>" + nextArrival + "</td><td>" + away + "<button type='button' class='btn btn-danger btn-xs pull-right' value='Delete'><span class='glyphicon glyphicon-trash'></span></button>" + "</td></tr>")
+    $("#train-list tbody").append("<tr><td>" + name + "</td><td>" + destination + "</td><td>"  + freq + "</td><td>" + nextArrival + "</td><td>" + away + "<button type='button' class='btn btn-danger btn-xs pull-right'><span class='glyphicon glyphicon-trash'></span></button>" + "</td></tr>")
 
     }, function(errorObject){
       console.log("The read failed: " + errorObject.code);
