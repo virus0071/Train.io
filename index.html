@@ -16,6 +16,8 @@
 </head>
 
 <body>
+ 
+
 <div class="container">
   
     <br>
@@ -23,6 +25,7 @@
     <div class="jumbotron">
         <h1 class="text-center">Anytime is Train Time</h1>
         <h4 class="text-center">Choo Choo. Chee Chee.</h4>
+        
     </div>
 
 
@@ -32,6 +35,7 @@
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">Current Train Schedule</h3>
+                <h5 class="time">Current Time</h5>
             </div>
             <div class="panel-body">
                 <div id="train-list">
@@ -95,11 +99,13 @@
                   
 </div>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script type="text/javascript"></script>
 
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    
     <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase.js"></script>
     <script>
-      // Initialize Firebase
+      
       var config = {
         apiKey: "AIzaSyD7-oFHwTp3P2pzoZOom_WxoD4xBU-Snu8",
         authDomain: "testpro2-2ca10.firebaseapp.com",
@@ -126,14 +132,12 @@
         var destinationTd = $("<td>").text(snapshot.val().destination);
         var timeTd = $("<td>").text(snapshot.val().time);
         var freqTd = $("<td>").text(snapshot.val().freq);
-    }
+    };
 
-    var differTiming = moment().diff(moment.unix(start),"minutes");
-    var left = moment().diff(moment.unix(start),"minutes")% freq;
-    var away = freq - left;
+    
+    $(".time").html(moment().toString());
 
-    var nextArrival = moment().add(away, "m").format("hh:mm A");
-
+    
 
   $("#add-train").on("click", function(event){
     event.preventDefault();
@@ -160,12 +164,21 @@ database.ref().on("child_added", function(childsnapshot){
     $(time).text(childsnapshot.val().time);
     $(freq).text(childsnapshot.val().freq);
 
-    name = childsnapshot.val().name;
-    destination = childsnapshot.val().destination;
-    time = childsnapshot.val().time;
-    freq = childsnapshot.val().freq;
+    var name = childsnapshot.val().name;
+    var destination = childsnapshot.val().destination;
+    var time = childsnapshot.val().time;
+    var freq = childsnapshot.val().freq;
 
-    $("#train-list tbody").append("<tr><td>" + name + "</td><td>" + destination + "</td><td>" + time + "</td><td>" + freq + "</td><td>" + nextArrival + "</td><td>" + away + "</td></tr>")
+    var firstTime = time;
+    
+    var firstTimeConverted = moment(firstTime, "HH:MM").subtract(1, "years");
+    var currentTime = moment();
+    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+    var tRemainder = diffTime % freq;
+    var away = freq - tRemainder;
+    var nextArrival = moment().add(away, "minutes").format("hh:mm");
+
+    $("#train-list tbody").append("<tr><td>" + name + "</td><td>" + destination + "</td><td>"  + freq + "</td><td>" + nextArrival + "</td><td>" + away + "</td></tr>")
 
     }, function(errorObject){
       console.log("The read failed: " + errorObject.code);
